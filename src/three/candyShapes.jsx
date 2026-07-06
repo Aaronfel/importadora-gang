@@ -257,58 +257,40 @@ export function BeltMesh({ dim }) {
 
 /* ---------- gummy bear (stylized primitive assembly) ---------- */
 
+// part list shared by the field bears (own material) and the giant
+// chapter bear (single shared material whose color morphs per flavor)
+export const BEAR_PARTS = [
+  { position: [0, -0.25, 0], scale: [0.62, 0.72, 0.48], sphere: [1, 24, 18] }, // body
+  { position: [0, -0.32, 0.3], scale: [0.42, 0.5, 0.28], sphere: [1, 18, 14] }, // belly
+  { position: [0, 0.72, 0.05], scale: [0.48, 0.44, 0.42], sphere: [1, 24, 18] }, // head
+  { position: [0, 0.62, 0.42], scale: [0.22, 0.16, 0.14], sphere: [1, 14, 10] }, // muzzle
+  { position: [-0.36, 1.08, 0], scale: [0.17, 0.17, 0.12], sphere: [1, 14, 10] }, // ear
+  { position: [0.36, 1.08, 0], scale: [0.17, 0.17, 0.12], sphere: [1, 14, 10] }, // ear
+  { position: [-0.6, 0.05, 0.12], rotation: [0, 0, 0.9], capsule: [0.16, 0.34, 6, 10] }, // arm
+  { position: [0.6, 0.05, 0.12], rotation: [0, 0, -0.9], capsule: [0.16, 0.34, 6, 10] }, // arm
+  { position: [-0.32, -0.95, 0.18], rotation: [0.5, 0, 0.25], capsule: [0.18, 0.3, 6, 10] }, // leg
+  { position: [0.32, -0.95, 0.18], rotation: [0.5, 0, -0.25], capsule: [0.18, 0.3, 6, 10] }, // leg
+]
+
+export function BearParts({ material, children }) {
+  return (
+    <group scale={0.85} position={[0, -0.1, 0]}>
+      {BEAR_PARTS.map((part, i) => (
+        <mesh key={i} position={part.position} scale={part.scale} rotation={part.rotation}>
+          {part.sphere ? <sphereGeometry args={part.sphere} /> : <capsuleGeometry args={part.capsule} />}
+          {material ? <primitive object={material} attach="material" /> : children}
+        </mesh>
+      ))}
+    </group>
+  )
+}
+
 export function BearMesh({ color = '#ff8a3c', dim }) {
   const mat = gummyMat(color, dim, { clearcoat: 0.8, clearcoatRoughness: 0.18 })
   return (
-    <group scale={0.85} position={[0, -0.1, 0]}>
-      {/* body */}
-      <mesh position={[0, -0.25, 0]} scale={[0.62, 0.72, 0.48]}>
-        <sphereGeometry args={[1, 24, 18]} />
-        <meshPhysicalMaterial {...mat} />
-      </mesh>
-      {/* belly */}
-      <mesh position={[0, -0.32, 0.3]} scale={[0.42, 0.5, 0.28]}>
-        <sphereGeometry args={[1, 18, 14]} />
-        <meshPhysicalMaterial {...mat} />
-      </mesh>
-      {/* head */}
-      <mesh position={[0, 0.72, 0.05]} scale={[0.48, 0.44, 0.42]}>
-        <sphereGeometry args={[1, 24, 18]} />
-        <meshPhysicalMaterial {...mat} />
-      </mesh>
-      {/* muzzle */}
-      <mesh position={[0, 0.62, 0.42]} scale={[0.22, 0.16, 0.14]}>
-        <sphereGeometry args={[1, 14, 10]} />
-        <meshPhysicalMaterial {...mat} />
-      </mesh>
-      {/* ears */}
-      <mesh position={[-0.36, 1.08, 0]} scale={[0.17, 0.17, 0.12]}>
-        <sphereGeometry args={[1, 14, 10]} />
-        <meshPhysicalMaterial {...mat} />
-      </mesh>
-      <mesh position={[0.36, 1.08, 0]} scale={[0.17, 0.17, 0.12]}>
-        <sphereGeometry args={[1, 14, 10]} />
-        <meshPhysicalMaterial {...mat} />
-      </mesh>
-      {/* arms */}
-      <mesh position={[-0.6, 0.05, 0.12]} rotation={[0, 0, 0.9]}>
-        <capsuleGeometry args={[0.16, 0.34, 6, 10]} />
-        <meshPhysicalMaterial {...mat} />
-      </mesh>
-      <mesh position={[0.6, 0.05, 0.12]} rotation={[0, 0, -0.9]}>
-        <capsuleGeometry args={[0.16, 0.34, 6, 10]} />
-        <meshPhysicalMaterial {...mat} />
-      </mesh>
-      {/* legs */}
-      <mesh position={[-0.32, -0.95, 0.18]} rotation={[0.5, 0, 0.25]}>
-        <capsuleGeometry args={[0.18, 0.3, 6, 10]} />
-        <meshPhysicalMaterial {...mat} />
-      </mesh>
-      <mesh position={[0.32, -0.95, 0.18]} rotation={[0.5, 0, -0.25]}>
-        <capsuleGeometry args={[0.18, 0.3, 6, 10]} />
-        <meshPhysicalMaterial {...mat} />
-      </mesh>
-    </group>
+    <BearParts>
+      <meshPhysicalMaterial {...mat} />
+    </BearParts>
   )
 }
 

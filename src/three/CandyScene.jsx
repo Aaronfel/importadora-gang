@@ -9,8 +9,10 @@ import {
   StrawberryMesh,
   BeltMesh,
   BearMesh,
+  BearParts,
   TeethMesh,
 } from './candyShapes.jsx'
+import { CHAPTERS, chapterProgress, chapterIndex } from '../ui/FlavorChapters.jsx'
 
 const CANDY_COLORS = ['#e23a3a', '#ff4f9a', '#7b2d8e', '#57b8e4', '#7cc024', '#ffc93c', '#ff8a3c']
 
@@ -263,6 +265,78 @@ function Candy({ kind, color, position, scale, seed, reduced, dim = false }) {
   )
 }
 
+// Giant flavor-chapter gummy: pinned on screen while the runway section
+// scrolls by; rotates with progress, color-morphs per chapter, and one
+// flavor accent orbits it.
+function GiantGummy({ isMobile, reduced }) {
+  const group = useRef()
+  const accentRefs = [useRef(), useRef(), useRef()]
+
+  const bearMaterial = useMemo(
+    () =>
+      new THREE.MeshPhysicalMaterial({
+        color: new THREE.Color(CHAPTERS[0].bear),
+        roughness: 0.12,
+        clearcoat: 0.8,
+        clearcoatRoughness: 0.18,
+        envMapIntensity: 0.7,
+      }),
+    []
+  )
+  const targetColor = useMemo(() => new THREE.Color(CHAPTERS[0].bear), [])
+
+  useFrame((_, delta) => {
+    const g = group.current
+    if (!g) return
+    const p = chapterProgress()
+    if (p === null) {
+      g.visible = false
+      return
+    }
+    g.visible = true
+    const ci = chapterIndex(p)
+
+    // enter/exit envelope + spin
+    const enter = THREE.MathUtils.smoothstep(p, 0, 0.1)
+    const exit = 1 - THREE.MathUtils.smoothstep(p, 0.9, 1)
+    const base = isMobile ? 0.85 : 1.2
+    g.scale.setScalar(Math.max(base * Math.min(enter, exit), 0.0001))
+    if (reduced) {
+      g.rotation.set(0, 0.35, 0)
+    } else {
+      g.rotation.y = p * Math.PI * 2.5
+      g.rotation.x = Math.sin(p * Math.PI * 2) * 0.1
+    }
+
+    targetColor.set(CHAPTERS[ci].bear)
+    bearMaterial.color.lerp(targetColor, reduced ? 1 : Math.min(1, delta * 4))
+
+    accentRefs.forEach((ref, i) => {
+      if (!ref.current) return
+      const target = i === ci ? (isMobile ? 0.5 : 0.55) : 0.0001
+      const s = THREE.MathUtils.damp(ref.current.scale.x || 0.0001, target, 5, delta)
+      ref.current.scale.setScalar(s)
+    })
+  })
+
+  const accentPos = isMobile ? [1.25, 0.8, 0.4] : [1.8, 0.8, 0.4]
+
+  return (
+    <group ref={group} position={[0, -0.55, 1.1]} visible={false}>
+      <BearParts material={bearMaterial} />
+      <group ref={accentRefs[0]} position={accentPos} scale={0.0001}>
+        <WatermelonMesh />
+      </group>
+      <group ref={accentRefs[1]} position={[-accentPos[0], accentPos[1], accentPos[2]]} scale={0.0001}>
+        <TeethMesh />
+      </group>
+      <group ref={accentRefs[2]} position={accentPos} scale={0.0001}>
+        <BananaMesh />
+      </group>
+    </group>
+  )
+}
+
 // speed = how many world-units the layer climbs across the full scroll
 // xMin keeps candies out of the central text column
 const LAYERS = [
@@ -335,6 +409,8 @@ export default function CandyScene({ isMobile, reduced }) {
         <Lightformer intensity={1.3} position={[-5, 2, 3]} scale={[6, 6, 1]} color="#ffd1e8" />
         <Lightformer intensity={1.1} position={[5, -2, 2]} scale={[6, 6, 1]} color="#d1ecff" />
       </Environment>
+
+      <GiantGummy isMobile={isMobile} reduced={reduced} />
 
       {/* hero flank pieces — live in the near layer so they sweep away quickly */}
       <group ref={layerRefs[0]}>
