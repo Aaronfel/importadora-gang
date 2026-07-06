@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import Reveal from './Reveal.jsx'
+import SplitTitle from './SplitTitle.jsx'
 import { WHATSAPP_MAIN } from '../data/site.js'
 import { WhatsAppIcon, ChatIcon, BoxIcon, TrendIcon } from './icons.jsx'
 
@@ -50,7 +51,9 @@ export default function HowToBuy() {
             <span className="section-kicker" style={{ color: '#e23a3a', background: 'rgba(255,138,60,0.14)' }}>
               Compra mayorista
             </span>
-            <h2 className="section-title">Comprar es así de simple</h2>
+          </Reveal>
+          <SplitTitle text="Comprar es simple" className="section-title section-title-xxl title-bleed" />
+          <Reveal delay={0.3}>
             <p className="section-sub">
               Sin registros ni plataformas raras: hablás con una persona, recibís precios claros
               y tu pedido sale con entrega inmediata.

@@ -1,4 +1,5 @@
 import Reveal from './Reveal.jsx'
+import SplitTitle from './SplitTitle.jsx'
 import { SparkleIcon, TrendIcon, TruckIcon } from './icons.jsx'
 
 const PROPS = [
@@ -44,7 +45,9 @@ export default function ValueProps() {
             <span className="section-kicker" style={{ color: '#7b2d8e', background: 'rgba(123,45,142,0.1)' }}>
               Para tu comercio
             </span>
-            <h2 className="section-title">¿Por qué sumar Gummy Gang a tu góndola?</h2>
+          </Reveal>
+          <SplitTitle text="Sumá dulce a tu góndola" className="section-title section-title-xxl title-bleed" />
+          <Reveal delay={0.3}>
             <p className="section-sub">
               Somos distribuidora mayorista de golosinas importadas. Trabajamos con kioscos,
               supermercados, distribuidores y revendedores de todo el país.

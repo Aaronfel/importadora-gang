@@ -2,6 +2,7 @@ import { motion } from 'framer-motion'
 import { waLink, CATALOG_MESSAGE } from '../data/site.js'
 import { scrollToSection } from '../scrollStore.js'
 import { WhatsAppIcon } from './icons.jsx'
+import SplitTitle from './SplitTitle.jsx'
 
 const container = {
   hidden: {},
@@ -21,10 +22,26 @@ export default function Hero() {
           Distribuidora mayorista · Golosinas importadas
         </motion.span>
 
-        <motion.h1 className="hero-title" variants={item}>
-          <span className="line-1">GUMMY</span>
-          <span className="line-2">GANG</span>
-        </motion.h1>
+        <h1 className="hero-title" aria-label="Gummy Gang">
+          <SplitTitle
+            Tag="span"
+            text="GUMMY"
+            className="line-1"
+            colors={['#ff4f9a', '#e23a3a', '#ff8a3c', '#ffc93c', '#e23a3a']}
+            animateOnMount
+            hoverJiggle
+            delay={0.25}
+          />
+          <SplitTitle
+            Tag="span"
+            text="GANG"
+            className="line-2"
+            colors={['#7b2d8e', '#57b8e4', '#7cc024', '#ff4f9a']}
+            animateOnMount
+            hoverJiggle
+            delay={0.5}
+          />
+        </h1>
 
         <motion.p className="hero-tagline" variants={item}>
           Gomitas, crocantes y chicles importados que <strong>rotan solos en tu góndola</strong>.

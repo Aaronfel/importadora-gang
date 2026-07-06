@@ -1,6 +1,7 @@
 import { useRef } from 'react'
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion'
 import Reveal from './Reveal.jsx'
+import SplitTitle from './SplitTitle.jsx'
 import { PRODUCTS, waLink, CATALOG_MESSAGE } from '../data/site.js'
 import { WhatsAppIcon } from './icons.jsx'
 
@@ -62,7 +63,9 @@ export default function Gallery() {
             <span className="section-kicker" style={{ color: '#e23a3a', background: 'rgba(226,58,58,0.1)' }}>
               Catálogo
             </span>
-            <h2 className="section-title">Gomitas que se venden solas</h2>
+          </Reveal>
+          <SplitTitle text="Se venden solas" className="section-title section-title-xxl title-bleed" />
+          <Reveal delay={0.3}>
             <p className="section-sub">
               La línea Gummy Gang: 10 variedades escarchadas en bolsas de 100 g, con packaging
               que explota en la góndola. Esto es solo una parte del catálogo completo.

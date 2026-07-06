@@ -1,4 +1,5 @@
 import Reveal from './Reveal.jsx'
+import SplitTitle from './SplitTitle.jsx'
 import { BRAND_LINES } from '../data/site.js'
 
 export default function Brands() {
@@ -10,7 +11,9 @@ export default function Brands() {
             <span className="section-kicker" style={{ color: '#1f8a4c', background: 'rgba(124,192,36,0.14)' }}>
               Nuestras líneas
             </span>
-            <h2 className="section-title">Marcas que distribuimos</h2>
+          </Reveal>
+          <SplitTitle text="Marcas que distribuimos" className="section-title section-title-xxl title-bleed" />
+          <Reveal delay={0.3}>
             <p className="section-sub">
               Cinco líneas importadas que cubren toda la góndola dulce (y un toque de la salada):
               gomitas, crocantes, regaliz ácido, chicles y salsas.

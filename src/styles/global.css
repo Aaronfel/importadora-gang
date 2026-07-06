@@ -81,6 +81,32 @@ h3 {
   margin-bottom: 14px;
 }
 
+/* XXL edge-to-edge headings (SplitTitle) */
+.section-title-xxl {
+  font-size: clamp(2.4rem, 7.2vw, 6.8rem);
+  line-height: 0.98;
+  letter-spacing: -0.015em;
+  text-transform: uppercase;
+  margin-bottom: 22px;
+}
+
+.title-bleed {
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  padding-inline: 12px;
+}
+
+.split-title .st-word {
+  display: inline-block;
+  white-space: pre;
+}
+
+.split-title .st-letter {
+  display: inline-block;
+  will-change: transform;
+  transform-origin: 50% 85%;
+}
+
 .section-sub {
   color: var(--ink-soft);
   font-size: clamp(1rem, 1.4vw, 1.15rem);
@@ -297,28 +323,21 @@ h3 {
 }
 
 .hero-title {
-  font-size: clamp(3.2rem, 11vw, 8rem);
-  line-height: 0.95;
+  font-size: clamp(3.4rem, 12vw, 9rem);
+  line-height: 0.93;
   letter-spacing: -0.03em;
   margin-bottom: 22px;
 }
 
-.hero-title .line-1 {
-  display: block;
-  background: linear-gradient(100deg, var(--candy-pink) 10%, var(--candy-red) 45%, var(--candy-orange) 80%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  color: var(--candy-pink);
-}
-
+.hero-title .line-1,
 .hero-title .line-2 {
   display: block;
-  background: linear-gradient(100deg, var(--candy-purple) 15%, var(--candy-blue) 60%, var(--candy-green) 95%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  color: var(--candy-purple);
+  font-weight: 900;
+}
+
+.hero-title .st-letter {
+  cursor: default;
+  text-shadow: 0 4px 0 rgba(51, 16, 63, 0.08);
 }
 
 .hero-tagline {
