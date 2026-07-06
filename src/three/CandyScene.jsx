@@ -326,17 +326,22 @@ function Candy({ kind, color, position, scale, seed, reduced, dim = false, inter
   )
 }
 
-// Giant flavor heroes: one shape per chapter (watermelon → teeth → banana)
-// pinned on screen while the runway scrolls. The outgoing gummy squishes
-// away and the incoming one bounces in via a manual spring with
-// velocity-based squash & stretch.
-const HERO_SIZES = [1.55, 1.5, 1.45]
+// Giant flavor heroes: one shape per chapter (watermelon → cherry → teeth →
+// strawberry) pinned on screen while the runway scrolls. The outgoing gummy
+// squishes away and the incoming one bounces in via a manual spring with
+// velocity-based squash & stretch. `oscillate` keeps flat shapes front-facing.
+const HERO_SHAPES = [
+  { Mesh: WatermelonMesh, size: 1.55 },
+  { Mesh: CherryMesh, size: 1.55 },
+  { Mesh: TeethMesh, size: 1.5, oscillate: true },
+  { Mesh: StrawberryMesh, size: 1.5 },
+]
 const SPRING_K = 90
 const SPRING_C = 7.5
 
 function FlavorGiants({ isMobile, reduced }) {
   const root = useRef()
-  const shapeRefs = [useRef(), useRef(), useRef()]
+  const shapeRefs = [useRef(), useRef(), useRef(), useRef()]
   const springs = useRef(CHAPTERS.map(() => ({ s: 0.0001, v: 0 })))
 
   useFrame((_, delta) => {
@@ -350,7 +355,7 @@ function FlavorGiants({ isMobile, reduced }) {
     const dt = Math.min(delta, 0.05)
 
     springs.current.forEach((sp, i) => {
-      const base = HERO_SIZES[i] * (isMobile ? 0.88 : 1)
+      const base = HERO_SHAPES[i].size * (isMobile ? 0.88 : 1)
       const target = i === ci ? base : 0
       if (reduced) {
         sp.s = target
@@ -371,9 +376,9 @@ function FlavorGiants({ isMobile, reduced }) {
       if (mesh.visible) {
         if (reduced) {
           mesh.rotation.set(0, 0.3, 0)
-        } else if (i === 1) {
-          // the denture is flat: oscillate around front-facing instead of
-          // full spins so it stays readable
+        } else if (HERO_SHAPES[i].oscillate) {
+          // flat shapes oscillate around front-facing instead of full spins
+          // so they stay readable
           mesh.rotation.y = Math.sin((p ?? 0) * Math.PI * 5) * 0.55
           mesh.rotation.x = Math.sin((p ?? 0) * Math.PI * 2) * 0.15
           mesh.rotation.z = Math.sin((p ?? 0) * Math.PI * 3) * 0.08
@@ -390,20 +395,16 @@ function FlavorGiants({ isMobile, reduced }) {
 
   const poke = (i) => (e) => {
     e.stopPropagation()
-    if (!reduced) springs.current[i].v -= HERO_SIZES[i] * 6
+    if (!reduced) springs.current[i].v -= HERO_SHAPES[i].size * 6
   }
 
   return (
     <group ref={root} position={anchor} visible={false}>
-      <group ref={shapeRefs[0]} visible={false} onPointerDown={poke(0)}>
-        <WatermelonMesh />
-      </group>
-      <group ref={shapeRefs[1]} visible={false} onPointerDown={poke(1)}>
-        <TeethMesh />
-      </group>
-      <group ref={shapeRefs[2]} visible={false} onPointerDown={poke(2)}>
-        <BananaMesh />
-      </group>
+      {HERO_SHAPES.map(({ Mesh }, i) => (
+        <group key={CHAPTERS[i].key} ref={shapeRefs[i]} visible={false} onPointerDown={poke(i)}>
+          <Mesh />
+        </group>
+      ))}
     </group>
   )
 }

@@ -13,6 +13,13 @@ export const CHAPTERS = [
     bg: '#9edcf3',
   },
   {
+    key: 'cherry',
+    chip: 'Sabor cereza',
+    title: 'CHERRY',
+    line: 'Intensa y brillante. La que desaparece primero de la caja.',
+    bg: '#b9ecc9',
+  },
+  {
     key: 'teeth',
     chip: 'Dientes gomosos',
     title: 'TEETH',
@@ -20,10 +27,10 @@ export const CHAPTERS = [
     bg: '#ffc0d7',
   },
   {
-    key: 'banana',
-    chip: 'Sabor banana',
-    title: 'SWEET BANANA',
-    line: 'Dulce, esponjosa, irresistible. Se corta sola de la caja.',
+    key: 'strawberry',
+    chip: 'Sabor frutilla',
+    title: 'STRAWBERRY',
+    line: 'La clásica que nunca falla, con escarchado que brilla en góndola.',
     bg: '#ffedb2',
   },
 ]
@@ -50,8 +57,8 @@ export function ChapterRunway() {
   return (
     <section id="sabores" className="chapter-runway" aria-label="Sabores destacados">
       <p className="sr-only">
-        Sabores destacados de la línea Gummy Gang: Watermelon (sandía escarchada), Teeth
-        (dientes gomosos) y Sweet Banana (banana dulce).
+        Sabores destacados de la línea Gummy Gang: Watermelon (sandía escarchada), Cherry
+        (cereza), Teeth (dientes gomosos) y Strawberry (frutilla).
       </p>
     </section>
   )

@@ -63,7 +63,7 @@ body {
 /* ---------- flavor chapter (pinned) ---------- */
 
 .chapter-runway {
-  height: 340vh;
+  height: 440vh; /* ~1 viewport per chapter + enter/exit */
   position: relative;
 }
 
