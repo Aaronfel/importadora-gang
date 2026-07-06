@@ -232,15 +232,72 @@ const GENTLE_KINDS = new Set(['egg', 'watermelon', 'heart', 'teeth', 'bear', 'be
 // relative size boost so detailed shapes stay recognizable at field scale
 const KIND_SCALE = { watermelon: 1.3, heart: 1.25, teeth: 1.2, cherry: 1.15, strawberry: 1.15, bear: 1.1, belt: 1.15 }
 
-function Candy({ kind, color, position, scale, seed, reduced, dim = false }) {
+function Candy({ kind, color, position, scale, seed, reduced, dim = false, interactive = false, rain = false }) {
   const ref = useRef()
+  const inner = useRef()
+  const outer = useRef()
   const gentle = GENTLE_KINDS.has(kind)
 
-  useFrame((_, delta) => {
-    if (reduced || !ref.current) return
-    ref.current.rotation.x += delta * (gentle ? 0.05 : 0.1 + rand(seed) * 0.3)
-    ref.current.rotation.y += delta * (0.15 + rand(seed + 1) * 0.35)
+  // jelly squish spring (s → 1) + entrance candy-rain fall with bounce
+  const jelly = useRef({ s: 1, v: 0 })
+  const fall = useRef({
+    y: rain && !reduced ? 7 + rand(seed + 9) * 7 : 0,
+    v: 0,
+    delay: rand(seed + 10) * 0.7,
+    done: !rain || reduced,
   })
+
+  useFrame((_, delta) => {
+    const dt = Math.min(delta, 0.05)
+
+    const f = fall.current
+    if (!f.done && outer.current) {
+      if (f.delay > 0) {
+        f.delay -= dt
+      } else {
+        f.v -= 24 * dt
+        f.y += f.v * dt
+        if (f.y <= 0) {
+          f.y = 0
+          if (Math.abs(f.v) < 1.4) {
+            f.done = true
+            f.v = 0
+          } else {
+            jelly.current.v -= Math.min(7, Math.abs(f.v) * 0.7) // squash on landing
+            f.v = -f.v * 0.42
+          }
+        }
+      }
+      outer.current.position.y = f.y
+    }
+
+    const j = jelly.current
+    if (inner.current) {
+      j.v += (1 - j.s) * 140 * dt
+      j.v *= Math.exp(-9 * dt)
+      j.s += j.v * dt
+      const st = THREE.MathUtils.clamp(j.v * 0.045, -0.45, 0.45)
+      inner.current.scale.set(j.s * (1 - st * 0.5), j.s * (1 + st), j.s * (1 - st * 0.5))
+    }
+
+    if (reduced || !ref.current) return
+    ref.current.rotation.x += dt * (gentle ? 0.05 : 0.1 + rand(seed) * 0.3)
+    ref.current.rotation.y += dt * (0.15 + rand(seed + 1) * 0.35)
+  })
+
+  const handlers =
+    interactive && !reduced
+      ? {
+          onPointerOver: (e) => {
+            e.stopPropagation()
+            if (jelly.current.v > -2) jelly.current.v -= 5
+          },
+          onPointerDown: (e) => {
+            e.stopPropagation()
+            jelly.current.v -= 11
+          },
+        }
+      : {}
 
   return (
     <Float
@@ -248,17 +305,22 @@ function Candy({ kind, color, position, scale, seed, reduced, dim = false }) {
       rotationIntensity={reduced ? 0 : 0.35}
       floatIntensity={reduced ? 0 : 0.9}
     >
-      <group
-        ref={ref}
-        position={position}
-        scale={scale}
-        rotation={
-          gentle
-            ? [rand(seed + 3) * 0.7 - 0.35, rand(seed + 4) * Math.PI, rand(seed + 8) * 0.7 - 0.35]
-            : [rand(seed + 3) * Math.PI, rand(seed + 4) * Math.PI, 0]
-        }
-      >
-        <CandyShape kind={kind} color={color} dim={dim} seed={seed} />
+      <group ref={outer}>
+        <group
+          ref={ref}
+          position={position}
+          scale={scale}
+          rotation={
+            gentle
+              ? [rand(seed + 3) * 0.7 - 0.35, rand(seed + 4) * Math.PI, rand(seed + 8) * 0.7 - 0.35]
+              : [rand(seed + 3) * Math.PI, rand(seed + 4) * Math.PI, 0]
+          }
+          {...handlers}
+        >
+          <group ref={inner}>
+            <CandyShape kind={kind} color={color} dim={dim} seed={seed} />
+          </group>
+        </group>
       </group>
     </Float>
   )
@@ -326,15 +388,20 @@ function FlavorGiants({ isMobile, reduced }) {
 
   const anchor = isMobile ? [0, -1.05, 1.1] : [1.95, -0.15, 1.1]
 
+  const poke = (i) => (e) => {
+    e.stopPropagation()
+    if (!reduced) springs.current[i].v -= HERO_SIZES[i] * 6
+  }
+
   return (
     <group ref={root} position={anchor} visible={false}>
-      <group ref={shapeRefs[0]} visible={false}>
+      <group ref={shapeRefs[0]} visible={false} onPointerDown={poke(0)}>
         <WatermelonMesh />
       </group>
-      <group ref={shapeRefs[1]} visible={false}>
+      <group ref={shapeRefs[1]} visible={false} onPointerDown={poke(1)}>
         <TeethMesh />
       </group>
-      <group ref={shapeRefs[2]} visible={false}>
+      <group ref={shapeRefs[2]} visible={false} onPointerDown={poke(2)}>
         <BananaMesh />
       </group>
     </group>
@@ -418,23 +485,23 @@ export default function CandyScene({ isMobile, reduced }) {
 
       {/* hero flank pieces — live in the near layer so they sweep away quickly */}
       <group ref={layerRefs[0]}>
-        <Candy kind="worm" color="#e23a3a" position={[-3.9, -0.4, 1.2]} scale={1.35} seed={100} reduced={reduced} />
-        <Candy kind="bear" color="#e23a3a" position={[3.9, 1.1, 0.5]} scale={1.05} seed={104} reduced={reduced} />
-        <Candy kind="egg" color="#ffc93c" position={[3.6, -1.8, 1]} scale={1.4} seed={105} reduced={reduced} />
+        <Candy kind="worm" color="#e23a3a" position={[-3.9, -0.4, 1.2]} scale={1.35} seed={100} reduced={reduced} interactive rain />
+        <Candy kind="bear" color="#e23a3a" position={[3.9, 1.1, 0.5]} scale={1.05} seed={104} reduced={reduced} interactive rain />
+        <Candy kind="egg" color="#ffc93c" position={[3.6, -1.8, 1]} scale={1.4} seed={105} reduced={reduced} interactive rain />
         {layers[0].map((c) => (
-          <Candy key={c.seed} {...c} reduced={reduced} />
+          <Candy key={c.seed} {...c} reduced={reduced} interactive rain />
         ))}
       </group>
 
       <group ref={layerRefs[1]}>
         {layers[1].map((c) => (
-          <Candy key={c.seed} {...c} reduced={reduced} />
+          <Candy key={c.seed} {...c} reduced={reduced} interactive rain />
         ))}
       </group>
 
       <group ref={layerRefs[2]}>
         {layers[2].map((c) => (
-          <Candy key={c.seed} {...c} reduced={reduced} />
+          <Candy key={c.seed} {...c} reduced={reduced} rain />
         ))}
         <Sparkles
           count={isMobile ? 30 : 90}
