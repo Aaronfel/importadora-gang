@@ -27,12 +27,25 @@ export function scrollToSection(id) {
   const duration = Math.min(1400, 500 + Math.abs(dist) * 0.12)
   const start = performance.now()
   const myId = ++animId
-  // deliberate cancel: the user taking over with wheel/touch wins
+
+  // Deliberate user takeover wins — but trackpads emit tiny residual wheel
+  // deltas (even from the click itself), so only cancel on ACCUMULATED
+  // intentional input, never on the first micro-event.
+  let wheelAccum = 0
+  const onWheel = (e) => {
+    wheelAccum += Math.abs(e.deltaY)
+    if (wheelAccum > 25) cancel()
+  }
   const cancel = () => {
     animId += 1
+    cleanup()
   }
-  el.addEventListener('wheel', cancel, { once: true, passive: true })
-  el.addEventListener('touchstart', cancel, { once: true, passive: true })
+  const cleanup = () => {
+    el.removeEventListener('wheel', onWheel)
+    el.removeEventListener('touchstart', cancel)
+  }
+  el.addEventListener('wheel', onWheel, { passive: true })
+  el.addEventListener('touchstart', cancel, { passive: true })
 
   const easeInOutCubic = (t) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2)
 
@@ -41,6 +54,7 @@ export function scrollToSection(id) {
     const t = Math.min(1, (now - start) / duration)
     el.scrollTop = from + dist * easeInOutCubic(t)
     if (t < 1) requestAnimationFrame(step)
+    else cleanup()
   }
   requestAnimationFrame(step)
 }
