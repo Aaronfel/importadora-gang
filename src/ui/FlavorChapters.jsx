@@ -11,7 +11,6 @@ export const CHAPTERS = [
     title: 'WATERMELON',
     line: 'Escarchada y jugosa. La que más rota en el mostrador.',
     bg: '#9edcf3',
-    bear: '#ff5a63',
   },
   {
     key: 'teeth',
@@ -19,7 +18,6 @@ export const CHAPTERS = [
     title: 'TEETH',
     line: 'El ícono divertido del kiosco: nadie agarra una sola.',
     bg: '#ffc0d7',
-    bear: '#fff3ea',
   },
   {
     key: 'banana',
@@ -27,7 +25,6 @@ export const CHAPTERS = [
     title: 'SWEET BANANA',
     line: 'Dulce, esponjosa, irresistible. Se corta sola de la caja.',
     bg: '#ffedb2',
-    bear: '#ffc61e',
   },
 ]
 

@@ -9,7 +9,6 @@ import {
   StrawberryMesh,
   BeltMesh,
   BearMesh,
-  BearParts,
   TeethMesh,
 } from './candyShapes.jsx'
 import { CHAPTERS, chapterProgress, chapterIndex } from '../ui/FlavorChapters.jsx'
@@ -265,72 +264,77 @@ function Candy({ kind, color, position, scale, seed, reduced, dim = false }) {
   )
 }
 
-// Giant flavor-chapter gummy: pinned on screen while the runway section
-// scrolls by; rotates with progress, color-morphs per chapter, and one
-// flavor accent orbits it.
-function GiantGummy({ isMobile, reduced }) {
-  const group = useRef()
-  const accentRefs = [useRef(), useRef(), useRef()]
+// Giant flavor heroes: one shape per chapter (watermelon → teeth → banana)
+// pinned on screen while the runway scrolls. The outgoing gummy squishes
+// away and the incoming one bounces in via a manual spring with
+// velocity-based squash & stretch.
+const HERO_SIZES = [1.55, 1.5, 1.45]
+const SPRING_K = 90
+const SPRING_C = 7.5
 
-  const bearMaterial = useMemo(
-    () =>
-      new THREE.MeshPhysicalMaterial({
-        color: new THREE.Color(CHAPTERS[0].bear),
-        roughness: 0.12,
-        clearcoat: 0.8,
-        clearcoatRoughness: 0.18,
-        envMapIntensity: 0.7,
-      }),
-    []
-  )
-  const targetColor = useMemo(() => new THREE.Color(CHAPTERS[0].bear), [])
+function FlavorGiants({ isMobile, reduced }) {
+  const root = useRef()
+  const shapeRefs = [useRef(), useRef(), useRef()]
+  const springs = useRef(CHAPTERS.map(() => ({ s: 0.0001, v: 0 })))
 
   useFrame((_, delta) => {
-    const g = group.current
+    const g = root.current
     if (!g) return
     const p = chapterProgress()
-    if (p === null) {
-      g.visible = false
-      return
-    }
-    g.visible = true
-    const ci = chapterIndex(p)
+    const active = p !== null
+    g.visible = active || springs.current.some((sp) => sp.s > 0.01)
+    if (!g.visible) return
+    const ci = active ? chapterIndex(p) : -1
+    const dt = Math.min(delta, 0.05)
 
-    // enter/exit envelope + spin
-    const enter = THREE.MathUtils.smoothstep(p, 0, 0.1)
-    const exit = 1 - THREE.MathUtils.smoothstep(p, 0.9, 1)
-    const base = isMobile ? 0.85 : 1.2
-    g.scale.setScalar(Math.max(base * Math.min(enter, exit), 0.0001))
-    if (reduced) {
-      g.rotation.set(0, 0.35, 0)
-    } else {
-      g.rotation.y = p * Math.PI * 2.5
-      g.rotation.x = Math.sin(p * Math.PI * 2) * 0.1
-    }
-
-    targetColor.set(CHAPTERS[ci].bear)
-    bearMaterial.color.lerp(targetColor, reduced ? 1 : Math.min(1, delta * 4))
-
-    accentRefs.forEach((ref, i) => {
-      if (!ref.current) return
-      const target = i === ci ? (isMobile ? 0.5 : 0.55) : 0.0001
-      const s = THREE.MathUtils.damp(ref.current.scale.x || 0.0001, target, 5, delta)
-      ref.current.scale.setScalar(s)
+    springs.current.forEach((sp, i) => {
+      const base = HERO_SIZES[i] * (isMobile ? 0.88 : 1)
+      const target = i === ci ? base : 0
+      if (reduced) {
+        sp.s = target
+        sp.v = 0
+      } else {
+        sp.v += (target - sp.s) * SPRING_K * dt
+        sp.v *= Math.exp(-SPRING_C * dt)
+        sp.s = Math.max(0, sp.s + sp.v * dt)
+      }
+      const mesh = shapeRefs[i].current
+      if (!mesh) return
+      // squash & stretch from spring velocity: entering stretches tall,
+      // exiting squashes flat — the gummy squish
+      const stretch = reduced ? 0 : THREE.MathUtils.clamp(sp.v * 0.05, -0.4, 0.4)
+      const s = Math.max(sp.s, 0.0001)
+      mesh.scale.set(s * (1 - stretch * 0.55), s * (1 + stretch), s * (1 - stretch * 0.55))
+      mesh.visible = s > 0.005
+      if (mesh.visible) {
+        if (reduced) {
+          mesh.rotation.set(0, 0.3, 0)
+        } else if (i === 1) {
+          // the denture is flat: oscillate around front-facing instead of
+          // full spins so it stays readable
+          mesh.rotation.y = Math.sin((p ?? 0) * Math.PI * 5) * 0.55
+          mesh.rotation.x = Math.sin((p ?? 0) * Math.PI * 2) * 0.15
+          mesh.rotation.z = Math.sin((p ?? 0) * Math.PI * 3) * 0.08
+        } else {
+          mesh.rotation.y = (p ?? 0) * Math.PI * 2.5 + i * 0.6
+          mesh.rotation.x = Math.sin((p ?? 0) * Math.PI * 2) * 0.12
+          mesh.rotation.z = Math.sin((p ?? 0) * Math.PI * 3 + i) * 0.05
+        }
+      }
     })
   })
 
-  const accentPos = isMobile ? [1.25, 0.8, 0.4] : [1.8, 0.8, 0.4]
+  const anchor = isMobile ? [0, -1.05, 1.1] : [1.95, -0.15, 1.1]
 
   return (
-    <group ref={group} position={[0, -0.55, 1.1]} visible={false}>
-      <BearParts material={bearMaterial} />
-      <group ref={accentRefs[0]} position={accentPos} scale={0.0001}>
+    <group ref={root} position={anchor} visible={false}>
+      <group ref={shapeRefs[0]} visible={false}>
         <WatermelonMesh />
       </group>
-      <group ref={accentRefs[1]} position={[-accentPos[0], accentPos[1], accentPos[2]]} scale={0.0001}>
+      <group ref={shapeRefs[1]} visible={false}>
         <TeethMesh />
       </group>
-      <group ref={accentRefs[2]} position={accentPos} scale={0.0001}>
+      <group ref={shapeRefs[2]} visible={false}>
         <BananaMesh />
       </group>
     </group>
@@ -410,7 +414,7 @@ export default function CandyScene({ isMobile, reduced }) {
         <Lightformer intensity={1.1} position={[5, -2, 2]} scale={[6, 6, 1]} color="#d1ecff" />
       </Environment>
 
-      <GiantGummy isMobile={isMobile} reduced={reduced} />
+      <FlavorGiants isMobile={isMobile} reduced={reduced} />
 
       {/* hero flank pieces — live in the near layer so they sweep away quickly */}
       <group ref={layerRefs[0]}>
