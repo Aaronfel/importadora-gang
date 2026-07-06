@@ -27,11 +27,11 @@ export const CHAPTERS = [
     bg: '#ffc0d7',
   },
   {
-    key: 'strawberry',
-    chip: 'Sabor frutilla',
-    title: 'STRAWBERRY',
-    line: 'La clásica que nunca falla, con escarchado que brilla en góndola.',
-    bg: '#ffedb2',
+    key: 'egg',
+    chip: 'Huevo frito',
+    title: 'FRIED EGG',
+    line: 'El sabor que sorprende: nadie espera un huevo frito de gomita.',
+    bg: '#ffe4b8',
   },
 ]
 
@@ -58,7 +58,7 @@ export function ChapterRunway() {
     <section id="sabores" className="chapter-runway" aria-label="Sabores destacados">
       <p className="sr-only">
         Sabores destacados de la línea Gummy Gang: Watermelon (sandía escarchada), Cherry
-        (cereza), Teeth (dientes gomosos) y Strawberry (frutilla).
+        (cereza), Teeth (dientes gomosos) y Fried Egg (huevo frito).
       </p>
     </section>
   )

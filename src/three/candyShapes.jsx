@@ -43,20 +43,32 @@ const semiRing = (rOut, rIn) => {
   return shape
 }
 
-const extrudeOpts = { depth: 0.3, bevelEnabled: true, bevelThickness: 0.06, bevelSize: 0.05, bevelSegments: 3, curveSegments: 24 }
+const melonExtrude = (depth) => ({
+  depth,
+  bevelEnabled: true,
+  bevelThickness: 0.06,
+  bevelSize: 0.05,
+  bevelSegments: 3,
+  curveSegments: 24,
+})
 
-// the three layers share ONE coordinate space (concentric semicircles with
-// overlapping radii) and get the same translation — no per-mesh offsets, so
-// the rind can never detach from the flesh
+// The three layers share ONE coordinate space (concentric semicircles with
+// overlapping radii) and get the same centering translation — no per-mesh
+// offsets, so the rind can never detach from the flesh. Each layer has a
+// DIFFERENT thickness: overlapping faces are never coplanar (no z-fighting).
 let melonCache = null
 function getMelon() {
   if (!melonCache) {
-    melonCache = {
-      red: new THREE.ExtrudeGeometry(semiRing(0.8, 0), extrudeOpts),
-      white: new THREE.ExtrudeGeometry(semiRing(0.89, 0.76), extrudeOpts),
-      green: new THREE.ExtrudeGeometry(semiRing(1, 0.85), extrudeOpts),
+    const layer = (rOut, rIn, depth) => {
+      const geo = new THREE.ExtrudeGeometry(semiRing(rOut, rIn), melonExtrude(depth))
+      geo.translate(0, -0.42, -depth / 2)
+      return geo
     }
-    Object.values(melonCache).forEach((g) => g.translate(0, -0.42, -extrudeOpts.depth / 2))
+    melonCache = {
+      red: layer(0.8, 0, 0.34),
+      white: layer(0.89, 0.76, 0.28),
+      green: layer(1, 0.85, 0.22),
+    }
   }
   return melonCache
 }

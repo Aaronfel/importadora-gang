@@ -334,7 +334,7 @@ const HERO_SHAPES = [
   { Mesh: WatermelonMesh, size: 1.55 },
   { Mesh: CherryMesh, size: 1.55 },
   { Mesh: TeethMesh, size: 1.5, oscillate: true },
-  { Mesh: StrawberryMesh, size: 1.5 },
+  { Mesh: EggMesh, size: 1.65, oscillate: true, tiltX: 0.95 },
 ]
 const SPRING_K = 90
 const SPRING_C = 7.5
@@ -374,13 +374,14 @@ function FlavorGiants({ isMobile, reduced }) {
       mesh.scale.set(s * (1 - stretch * 0.55), s * (1 + stretch), s * (1 - stretch * 0.55))
       mesh.visible = s > 0.005
       if (mesh.visible) {
+        const tiltX = HERO_SHAPES[i].tiltX ?? 0
         if (reduced) {
-          mesh.rotation.set(0, 0.3, 0)
+          mesh.rotation.set(tiltX, 0.3, 0)
         } else if (HERO_SHAPES[i].oscillate) {
-          // flat shapes oscillate around front-facing instead of full spins
-          // so they stay readable
+          // flat shapes oscillate around a readable base pose instead of
+          // spinning full circles
           mesh.rotation.y = Math.sin((p ?? 0) * Math.PI * 5) * 0.55
-          mesh.rotation.x = Math.sin((p ?? 0) * Math.PI * 2) * 0.15
+          mesh.rotation.x = tiltX + Math.sin((p ?? 0) * Math.PI * 2) * 0.15
           mesh.rotation.z = Math.sin((p ?? 0) * Math.PI * 3) * 0.08
         } else {
           mesh.rotation.y = (p ?? 0) * Math.PI * 2.5 + i * 0.6
