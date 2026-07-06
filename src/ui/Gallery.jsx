@@ -1,0 +1,88 @@
+import { useRef } from 'react'
+import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion'
+import Reveal from './Reveal.jsx'
+import { PRODUCTS, waLink, CATALOG_MESSAGE } from '../data/site.js'
+import { WhatsAppIcon } from './icons.jsx'
+
+function TiltCard({ product, index }) {
+  const ref = useRef(null)
+  const px = useMotionValue(0.5)
+  const py = useMotionValue(0.5)
+  const rotateX = useSpring(useTransform(py, [0, 1], [9, -9]), { stiffness: 200, damping: 20 })
+  const rotateY = useSpring(useTransform(px, [0, 1], [-11, 11]), { stiffness: 200, damping: 20 })
+
+  const handleMove = (e) => {
+    if (e.pointerType !== 'mouse' || !ref.current) return
+    const rect = ref.current.getBoundingClientRect()
+    px.set((e.clientX - rect.left) / rect.width)
+    py.set((e.clientY - rect.top) / rect.height)
+  }
+
+  const reset = () => {
+    px.set(0.5)
+    py.set(0.5)
+  }
+
+  return (
+    <motion.figure
+      ref={ref}
+      className="product-card"
+      style={{ rotateX, rotateY, perspective: 900 }}
+      initial={{ opacity: 0, y: 50, rotateZ: index % 2 === 0 ? -3 : 3 }}
+      whileInView={{ opacity: 1, y: 0, rotateZ: 0 }}
+      viewport={{ once: true, amount: 0.2 }}
+      transition={{ duration: 0.65, delay: (index % 5) * 0.07, ease: [0.22, 1, 0.36, 1] }}
+      whileHover={{ scale: 1.03 }}
+      onPointerMove={handleMove}
+      onPointerLeave={reset}
+    >
+      <img
+        src={`/products/${product.slug}.webp`}
+        alt={`Gummy Gang ${product.name} — ${product.flavor}`}
+        loading="lazy"
+        width="600"
+        height="900"
+      />
+      <figcaption>
+        <span className="p-name">{product.name}</span>
+        <span className="p-flavor" style={{ background: product.color }}>
+          {product.flavor}
+        </span>
+      </figcaption>
+    </motion.figure>
+  )
+}
+
+export default function Gallery() {
+  return (
+    <section id="productos" className="section bg-gallery">
+      <div className="section-inner">
+        <div className="section-head">
+          <Reveal>
+            <span className="section-kicker" style={{ color: '#e23a3a', background: 'rgba(226,58,58,0.1)' }}>
+              Catálogo
+            </span>
+            <h2 className="section-title">Gomitas que se venden solas</h2>
+            <p className="section-sub">
+              La línea Gummy Gang: 10 variedades escarchadas en bolsas de 100 g, con packaging
+              que explota en la góndola. Esto es solo una parte del catálogo completo.
+            </p>
+          </Reveal>
+        </div>
+
+        <div className="gallery-grid">
+          {PRODUCTS.map((product, i) => (
+            <TiltCard key={product.slug} product={product} index={i} />
+          ))}
+        </div>
+
+        <Reveal className="gallery-cta" delay={0.1}>
+          <a className="btn btn-whatsapp" href={waLink(CATALOG_MESSAGE)} target="_blank" rel="noreferrer">
+            <WhatsAppIcon size={20} />
+            Quiero el catálogo completo con precios
+          </a>
+        </Reveal>
+      </div>
+    </section>
+  )
+}
