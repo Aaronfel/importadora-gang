@@ -13,7 +13,7 @@ export default function Nav() {
   return (
     <nav className="nav" aria-label="Navegación principal">
       <button type="button" className="nav-logo" onClick={() => scrollToSection('hero')} aria-label="Ir al inicio">
-        <span className="g1">GUMMY</span> <span className="g2">GANG</span>
+        <span className="g1">IMPORTADORA</span> <span className="g2">GANG</span>
       </button>
 
       <ul className="nav-links">

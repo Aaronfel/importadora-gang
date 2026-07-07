@@ -1,6 +1,6 @@
-# Gummy Gang — Landing Mayorista 3D
+# Importadora Gang — Landing Mayorista 3D
 
-Landing page de una sola página para **Gummy Gang**, distribuidora mayorista de golosinas importadas. Objetivo: conversión B2B — que un comercio pida el catálogo mayorista por WhatsApp.
+Landing page de una sola página para **Importadora Gang**, distribuidora mayorista de golosinas importadas (Gummy Gang es su línea insignia de gomitas). Objetivo: conversión B2B — que un comercio pida el catálogo mayorista por WhatsApp.
 
 ## Correr el proyecto
 

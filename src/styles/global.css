@@ -364,6 +364,16 @@ h3 {
   .nav-links { display: none; }
 }
 
+@media (max-width: 480px) {
+  .nav { padding-left: 16px; }
+  .nav-logo { font-size: 1rem; }
+  .nav .btn {
+    padding: 10px 16px;
+    font-size: 0.85rem;
+    white-space: nowrap;
+  }
+}
+
 /* ---------- floating whatsapp ---------- */
 
 .wa-fab {
@@ -435,7 +445,7 @@ h3 {
 }
 
 .hero-title {
-  font-size: clamp(3.4rem, 12vw, 9rem);
+  font-size: clamp(2.3rem, 9.4vw, 8.5rem);
   line-height: 0.93;
   letter-spacing: -0.03em;
   margin-bottom: 22px;

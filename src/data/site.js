@@ -7,7 +7,7 @@ export const waLink = (message) =>
   `https://wa.me/${WHATSAPP_MAIN}?text=${encodeURIComponent(message)}`
 
 export const CATALOG_MESSAGE =
-  'Hola Gummy Gang 👋 Tengo un comercio y quiero recibir el catálogo mayorista con precios.'
+  'Hola Importadora Gang 👋 Tengo un comercio y quiero recibir el catálogo mayorista con precios.'
 
 export const PRODUCTS = [
   { slug: 'watermelon', name: 'Watermelon', flavor: 'Sandía escarchada', color: '#57B8E4' },

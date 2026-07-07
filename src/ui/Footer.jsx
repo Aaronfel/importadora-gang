@@ -12,7 +12,7 @@ export default function Footer() {
       <div className="footer-inner">
         <div>
           <span className="nav-logo" aria-hidden="true">
-            <span className="g1" style={{ color: '#ff4f9a' }}>GUMMY</span>{' '}
+            <span className="g1" style={{ color: '#ff4f9a' }}>IMPORTADORA</span>{' '}
             <span className="g2" style={{ color: '#ffc93c' }}>GANG</span>
           </span>
           <p>
@@ -55,7 +55,7 @@ export default function Footer() {
       </div>
 
       <div className="footer-bottom">
-        <span>© {new Date().getFullYear()} Gummy Gang. Todos los derechos reservados.</span>
+        <span>© {new Date().getFullYear()} Importadora Gang. Todos los derechos reservados.</span>
         <span>Pedidos mayoristas: {PHONE_MAIN_DISPLAY} · {PHONE_ALT_DISPLAY}</span>
       </div>
     </footer>

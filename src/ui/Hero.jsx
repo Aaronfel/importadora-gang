@@ -22,12 +22,12 @@ export default function Hero() {
           Distribuidora mayorista · Golosinas importadas
         </motion.span>
 
-        <h1 className="hero-title" aria-label="Gummy Gang">
+        <h1 className="hero-title" aria-label="Importadora Gang">
           <SplitTitle
             Tag="span"
-            text="GUMMY"
+            text="IMPORTADORA"
             className="line-1"
-            colors={['#ff4f9a', '#e23a3a', '#ff8a3c', '#ffc93c', '#e23a3a']}
+            colors={['#ff4f9a', '#e23a3a', '#ff8a3c', '#ffc93c', '#7cc024', '#57b8e4', '#7b2d8e']}
             animateOnMount
             hoverJiggle
             delay={0.25}
@@ -39,7 +39,7 @@ export default function Hero() {
             colors={['#7b2d8e', '#57b8e4', '#7cc024', '#ff4f9a']}
             animateOnMount
             hoverJiggle
-            delay={0.5}
+            delay={0.55}
           />
         </h1>
 

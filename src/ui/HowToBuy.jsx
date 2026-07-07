@@ -33,7 +33,7 @@ export default function HowToBuy() {
   const handleSubmit = (e) => {
     e.preventDefault()
     const lines = [
-      `Hola Gummy Gang 👋 Soy ${form.nombre || '...'}`,
+      `Hola Importadora Gang 👋 Soy ${form.nombre || '...'}`,
       `Tengo un comercio: ${form.negocio || '...'}`,
       `Zona: ${form.zona || '...'}`,
       `Me interesa: ${form.interes}`,
