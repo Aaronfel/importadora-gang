@@ -4,6 +4,19 @@ export const scrollStore = {
   el: null,
 }
 
+// drei's ScrollControls scroller contains a sticky viewport-sized div that
+// adds one extra viewport of scrollable area: the html content translates by
+// scrollTop * (pages-1)/pages, NOT 1:1. To land content position `y` at the
+// top of the screen, scrollTop must be scaled by the inverse factor.
+//   content travel  = scrollHeight - 2*clientHeight   // (pages-1) * vh
+//   scroll threshold = scrollHeight - clientHeight    // pages * vh (max scrollTop)
+export function contentToScrollTop(el, y) {
+  const travel = el.scrollHeight - 2 * el.clientHeight
+  const threshold = el.scrollHeight - el.clientHeight
+  if (travel <= 0) return y
+  return (y * threshold) / travel
+}
+
 // Custom rAF scroll animation instead of native scrollTo({behavior:'smooth'}):
 // Chrome cancels native smooth scrolls on any residual wheel/trackpad delta,
 // which killed long jumps (through the 440vh chapter runway) midway.
@@ -15,7 +28,7 @@ export function scrollToSection(id) {
   if (!el || !target) return
 
   const from = el.scrollTop
-  const to = Math.min(target.offsetTop, el.scrollHeight - el.clientHeight)
+  const to = Math.min(contentToScrollTop(el, target.offsetTop), el.scrollHeight - el.clientHeight)
   const dist = to - from
   if (Math.abs(dist) < 2) return
 

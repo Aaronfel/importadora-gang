@@ -35,15 +35,19 @@ export const CHAPTERS = [
   },
 ]
 
-// progress of the pinned section: 0..1 across the runway, or null outside
+// progress of the pinned section: 0..1 across the runway, or null outside.
+// drei translates content by offset * (scrollHeight - 2*clientHeight) while
+// offset itself is scrollTop / (scrollHeight - clientHeight) — the section's
+// start/end must be expressed in CONTENT travel, the offset in SCROLL space.
 export function chapterProgress() {
   const el = scrollStore.el
   const sec = document.getElementById('sabores')
   if (!el || !sec) return null
   const denom = el.scrollHeight - el.clientHeight
-  if (denom <= 0) return null
-  const start = sec.offsetTop / denom
-  const end = (sec.offsetTop + sec.offsetHeight - el.clientHeight) / denom
+  const travel = el.scrollHeight - 2 * el.clientHeight
+  if (denom <= 0 || travel <= 0) return null
+  const start = sec.offsetTop / travel
+  const end = (sec.offsetTop + sec.offsetHeight - el.clientHeight) / travel
   const offset = el.scrollTop / denom
   if (offset < start - 0.03 || offset > end + 0.03) return null
   return Math.min(1, Math.max(0, (offset - start) / (end - start)))
