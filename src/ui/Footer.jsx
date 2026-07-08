@@ -51,7 +51,6 @@ export default function Footer() {
 
       <div className="footer-bottom">
         <span>© {new Date().getFullYear()} Importadora Gang. Todos los derechos reservados.</span>
-        <span>Pedidos mayoristas: {PHONE_MAIN_DISPLAY} · {PHONE_ALT_DISPLAY}</span>
       </div>
     </footer>
   )
