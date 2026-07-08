@@ -41,13 +41,8 @@ export default function Footer() {
           <h4>Redes</h4>
           <ul>
             <li>
-              <a href="https://instagram.com" target="_blank" rel="noreferrer">
+              <a href="https://www.instagram.com/importadoragang/" target="_blank" rel="noreferrer">
                 Instagram
-              </a>
-            </li>
-            <li>
-              <a href="https://facebook.com" target="_blank" rel="noreferrer">
-                Facebook
               </a>
             </li>
           </ul>
