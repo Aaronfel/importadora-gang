@@ -40,6 +40,8 @@ src/
 public/
   products/*.webp       ← fotos de bolsas Gummy Gang (gallery)
   flyers/*.webp         ← flyers de líneas (Crunchy, Licorice, Yaams, Happy Mum)
+assets/
+  fotos-originales/     ← JPEGs fuente (WhatsApp); la app no los usa, son la materia prima de los WebP
 ```
 
 ## Datos editables (src/data/site.js)
