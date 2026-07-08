@@ -364,14 +364,18 @@ h3 {
   .nav-links { display: none; }
 }
 
+.nav-cta-short { display: none; }
+
 @media (max-width: 480px) {
   .nav { padding-left: 16px; }
-  .nav-logo { font-size: 1rem; }
+  .nav-logo { font-size: 1.05rem; }
   .nav .btn {
     padding: 10px 16px;
     font-size: 0.85rem;
     white-space: nowrap;
   }
+  .nav-cta-full { display: none; }
+  .nav-cta-short { display: inline; }
 }
 
 /* ---------- floating whatsapp ---------- */

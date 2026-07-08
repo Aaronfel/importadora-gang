@@ -28,7 +28,8 @@ export default function Nav() {
 
       <a className="btn btn-primary" href={waLink(CATALOG_MESSAGE)} target="_blank" rel="noreferrer">
         <WhatsAppIcon size={18} />
-        Pedir catálogo
+        <span className="nav-cta-full">Pedir catálogo</span>
+        <span className="nav-cta-short">Catálogo</span>
       </a>
     </nav>
   )
