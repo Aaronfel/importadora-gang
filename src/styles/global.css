@@ -610,10 +610,11 @@ h3 {
 .product-card img {
   width: 100%;
   height: auto;
-  aspect-ratio: 2 / 3;
-  object-fit: cover;
-  object-position: center 62%;
+  aspect-ratio: 1 / 1;
+  object-fit: contain;
   display: block;
+  padding: 18px;
+  background: linear-gradient(180deg, #fff8f0 0%, #fbeef4 100%);
 }
 
 .product-card figcaption {

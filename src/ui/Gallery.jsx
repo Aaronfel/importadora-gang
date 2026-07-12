@@ -2,7 +2,8 @@ import { useRef } from 'react'
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion'
 import Reveal from './Reveal.jsx'
 import SplitTitle from './SplitTitle.jsx'
-import { PRODUCTS, waLink, CATALOG_MESSAGE } from '../data/site.js'
+import { waLink, CATALOG_MESSAGE, paletteFor, categoryLabel } from '../data/site.js'
+import { useImporterProducts } from '../hooks/useImporterProducts.js'
 import { WhatsAppIcon } from './icons.jsx'
 
 function TiltCard({ product, index }) {
@@ -24,6 +25,9 @@ function TiltCard({ product, index }) {
     py.set(0.5)
   }
 
+  const chipColor = paletteFor(product.category)
+  const chipText = categoryLabel(product.category)
+
   return (
     <motion.figure
       ref={ref}
@@ -38,23 +42,28 @@ function TiltCard({ product, index }) {
       onPointerLeave={reset}
     >
       <img
-        src={`/products/${product.slug}.webp`}
-        alt={`Gummy Gang ${product.name} — ${product.flavor}`}
+        src={product.image}
+        alt={`Importadora Gang · ${product.name}`}
         loading="lazy"
         width="600"
         height="900"
       />
       <figcaption>
         <span className="p-name">{product.name}</span>
-        <span className="p-flavor" style={{ background: product.color }}>
-          {product.flavor}
-        </span>
+        {chipText && (
+          <span className="p-flavor" style={{ background: chipColor }}>
+            {chipText}
+          </span>
+        )}
       </figcaption>
     </motion.figure>
   )
 }
 
 export default function Gallery() {
+  const { products, loading, error } = useImporterProducts()
+  const showEmptyState = !loading && (error || products.length === 0)
+
   return (
     <section id="productos" className="section bg-gallery">
       <div className="section-inner">
@@ -67,17 +76,30 @@ export default function Gallery() {
           <SplitTitle text="Se venden solas" className="section-title section-title-xxl title-bleed" />
           <Reveal delay={0.3}>
             <p className="section-sub">
-              La línea Gummy Gang: 10 variedades escarchadas en bolsas de 100 g, con packaging
-              que explota en la góndola. Esto es solo una parte del catálogo completo.
+              Un vistazo a lo que rota fuerte en góndola. Esto es solo una parte del catálogo completo.
             </p>
           </Reveal>
         </div>
 
-        <div className="gallery-grid">
-          {PRODUCTS.map((product, i) => (
-            <TiltCard key={product.slug} product={product} index={i} />
-          ))}
-        </div>
+        {loading && (
+          <p className="section-sub" style={{ textAlign: 'center' }}>
+            Cargando catálogo…
+          </p>
+        )}
+
+        {showEmptyState && (
+          <p className="section-sub" style={{ textAlign: 'center' }}>
+            Estamos actualizando el catálogo. Escribinos por WhatsApp y te lo pasamos completo.
+          </p>
+        )}
+
+        {!loading && !error && products.length > 0 && (
+          <div className="gallery-grid">
+            {products.map((product, i) => (
+              <TiltCard key={product.id} product={product} index={i} />
+            ))}
+          </div>
+        )}
 
         <Reveal className="gallery-cta" delay={0.1}>
           <a className="btn btn-whatsapp" href={waLink(CATALOG_MESSAGE)} target="_blank" rel="noreferrer">

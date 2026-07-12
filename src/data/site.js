@@ -9,18 +9,40 @@ export const waLink = (message) =>
 export const CATALOG_MESSAGE =
   'Hola Importadora Gang 👋 Tengo un comercio y quiero recibir el catálogo mayorista con precios.'
 
-export const PRODUCTS = [
-  { slug: 'watermelon', name: 'Watermelon', flavor: 'Sandía escarchada', color: '#57B8E4' },
-  { slug: 'sour-shark', name: 'Sour Shark', flavor: 'Tiburones ácidos', color: '#D9333F' },
-  { slug: 'strawberry', name: 'Strawberry', flavor: 'Frutilla', color: '#E4326B' },
-  { slug: 'bear', name: 'Bear', flavor: 'Ositos frutales', color: '#F79A3E' },
-  { slug: 'banana', name: 'Sweet Banana', flavor: 'Banana dulce', color: '#F5C63C' },
-  { slug: 'teeth', name: 'Teeth', flavor: 'Dientes gomosos', color: '#F58AB6' },
-  { slug: 'fried-egg', name: 'Fried Egg', flavor: 'Huevo frito', color: '#F2B34C' },
-  { slug: 'cherry', name: 'Cherry', flavor: 'Cereza intensa', color: '#C4265E' },
-  { slug: 'sour-donut', name: 'Sour Donut', flavor: 'Donas ácidas', color: '#EDA33C' },
-  { slug: 'sweet-heat', name: 'Sweet Heat', flavor: 'Dulce picante', color: '#E85A4F' },
-]
+// Category chip palette for gallery cards. Keys must match products.category
+// values from the shared Supabase DB (compared lowercased + trimmed). Colors
+// reuse the --candy-* brand tokens defined in src/styles/global.css.
+export const CATEGORY_PALETTE = {
+  'golosinas': '#ff4f9a',
+  'snacks': '#ff8a3c',
+  'galletitas': '#ffc93c',
+  'lácteos': '#57b8e4',
+  'conservas': '#7cc024',
+  'salsas y condimentos': '#e23a3a',
+  'condimentos': '#e23a3a',
+  'sopas y caldos': '#7b2d8e',
+  'frutos secos': '#ff8a3c',
+  'congelados': '#57b8e4',
+  'vinos y licores': '#7b2d8e',
+  'postres': '#ff4f9a',
+  'mar': '#57b8e4',
+  'bebidas': '#7cc024',
+}
+
+const FALLBACK_CHIP = '#7b2d8e'
+
+export function paletteFor(category) {
+  if (!category) return FALLBACK_CHIP
+  return CATEGORY_PALETTE[category.trim().toLowerCase()] ?? FALLBACK_CHIP
+}
+
+export function categoryLabel(category) {
+  if (!category) return ''
+  return category
+    .split(' ')
+    .map((w) => (w.length ? w[0].toUpperCase() + w.slice(1).toLowerCase() : w))
+    .join(' ')
+}
 
 export const BRAND_LINES = [
   {
