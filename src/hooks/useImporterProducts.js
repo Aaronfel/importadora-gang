@@ -15,7 +15,7 @@ export function useImporterProducts() {
         .from('products')
         .select('id,name,category,image')
         .eq('show_in_importer', true)
-        .order('name', { ascending: true })
+        .order('id', { ascending: true })
       if (cancelled) return
       if (fetchError) setError(fetchError.message)
       else setProducts(data ?? [])
