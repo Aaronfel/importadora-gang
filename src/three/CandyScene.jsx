@@ -402,7 +402,12 @@ function FlavorGiants({ isMobile, reduced }) {
   return (
     <group ref={root} position={anchor} visible={false}>
       {HERO_SHAPES.map(({ Mesh }, i) => (
-        <group key={CHAPTERS[i].key} ref={shapeRefs[i]} visible={false} onPointerDown={poke(i)}>
+        <group
+          key={CHAPTERS[i].key}
+          ref={shapeRefs[i]}
+          visible={false}
+          onPointerDown={isMobile ? undefined : poke(i)}
+        >
           <Mesh />
         </group>
       ))}
@@ -466,9 +471,13 @@ export default function CandyScene({ isMobile, reduced }) {
 
     if (reduced) return
     const cam = state.camera
-    cam.position.x = THREE.MathUtils.damp(cam.position.x, state.pointer.x * 0.7, 3, delta)
-    cam.position.y = THREE.MathUtils.damp(cam.position.y, state.pointer.y * 0.4, 3, delta)
-    cam.position.z = THREE.MathUtils.damp(cam.position.z, 9 - offset * 3.2, 3, delta)
+    // no pointer sway on touch: the finger dragging to scroll would jitter
+    // the camera; the dolly follows the scroll snappier there too
+    const targetX = isMobile ? 0 : state.pointer.x * 0.7
+    const targetY = isMobile ? 0 : state.pointer.y * 0.4
+    cam.position.x = THREE.MathUtils.damp(cam.position.x, targetX, 3, delta)
+    cam.position.y = THREE.MathUtils.damp(cam.position.y, targetY, 3, delta)
+    cam.position.z = THREE.MathUtils.damp(cam.position.z, 9 - offset * 3.2, isMobile ? 5 : 3, delta)
     cam.lookAt(0, 0, 0)
   })
 
@@ -487,17 +496,17 @@ export default function CandyScene({ isMobile, reduced }) {
 
       {/* hero flank pieces — live in the near layer so they sweep away quickly */}
       <group ref={layerRefs[0]}>
-        <Candy kind="worm" color="#e23a3a" position={[-3.9, -0.4, 1.2]} scale={1.35} seed={100} reduced={reduced} interactive rain />
-        <Candy kind="bear" color="#e23a3a" position={[3.9, 1.1, 0.5]} scale={1.05} seed={104} reduced={reduced} interactive rain />
-        <Candy kind="egg" color="#ffc93c" position={[3.6, -1.8, 1]} scale={1.4} seed={105} reduced={reduced} interactive rain />
+        <Candy kind="worm" color="#e23a3a" position={[-3.9, -0.4, 1.2]} scale={1.35} seed={100} reduced={reduced} interactive={!isMobile} rain />
+        <Candy kind="bear" color="#e23a3a" position={[3.9, 1.1, 0.5]} scale={1.05} seed={104} reduced={reduced} interactive={!isMobile} rain />
+        <Candy kind="egg" color="#ffc93c" position={[3.6, -1.8, 1]} scale={1.4} seed={105} reduced={reduced} interactive={!isMobile} rain />
         {layers[0].map((c) => (
-          <Candy key={c.seed} {...c} reduced={reduced} interactive rain />
+          <Candy key={c.seed} {...c} reduced={reduced} interactive={!isMobile} rain />
         ))}
       </group>
 
       <group ref={layerRefs[1]}>
         {layers[1].map((c) => (
-          <Candy key={c.seed} {...c} reduced={reduced} interactive rain />
+          <Candy key={c.seed} {...c} reduced={reduced} interactive={!isMobile} rain />
         ))}
       </group>
 

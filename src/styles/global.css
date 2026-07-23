@@ -422,6 +422,9 @@ h3 {
 
 .hero {
   min-height: 100dvh;
+  /* svh is stable while the mobile URL bar shows/hides — keeps the content
+     height constant so ScrollControls' pages never churn mid-scroll */
+  min-height: 100svh;
   display: flex;
   flex-direction: column;
   align-items: center;
